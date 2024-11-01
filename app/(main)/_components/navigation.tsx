@@ -18,14 +18,14 @@ import { api } from '@/convex/_generated/api';
 import { toast } from 'sonner';
 import { DocumentList } from './DocumentList';
 import { TrashBox } from './TrashBox';
-
+import { useSearch } from '@/hooks/use-search';
 
 const Navigation = () => {
 
 
   
   const create = useMutation(api.documents.create)
-  
+  const search = useSearch()
   
   
   const isMobile = useMediaQuery("(max-width: 768px)")
@@ -148,7 +148,7 @@ const handleCreate = () => {
         label='Search'
         icon={Search}
         isSearch
-        onClick={()=> {}}
+        onClick={search.onOpen}
         />
         <Item 
         label='Settings'
