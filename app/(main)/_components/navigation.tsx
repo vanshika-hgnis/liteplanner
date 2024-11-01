@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import {Item} from "./Item"
 import { useState } from 'react';
+import {useSettings} from "@/hooks/use-settings"
 import {useMediaQuery} from "usehooks-ts"
 import { UserItem } from './User-Item';
 import { useMutation} from 'convex/react';
@@ -27,7 +28,7 @@ const Navigation = () => {
   const create = useMutation(api.documents.create)
   const search = useSearch()
   
-  
+  const settings = useSettings()
   const isMobile = useMediaQuery("(max-width: 768px)")
   const pathname = usePathname();
   const isResizingRef = useRef(false)
@@ -153,7 +154,7 @@ const handleCreate = () => {
         <Item 
         label='Settings'
         icon={Settings}
-        onClick={()=> {}}
+        onClick={settings.onOpen}
         />
         <Item onClick={handleCreate}
         label="New page" 
