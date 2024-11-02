@@ -39,7 +39,15 @@ const onChange = (content: string) => {
 
 if(document === undefined){
   return <div>
-    Loading.....
+<Cover.Skeleton/>
+<div className="md:max-2-3xl lg:max-w-4xll mx-auto">
+<div className="space-y-4 pl-8 pt-4">
+<Skeleton className="h-14 w-[50p%]"/>
+<Skeleton className="h-4 w-[80p%]"/>
+<Skeleton className="h-4 w-[40p%]"/>
+<Skeleton className="h-4 w-[60p%]"/>
+</div>
+</div>
   </div>
 }
 
