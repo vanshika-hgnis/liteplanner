@@ -1,32 +1,28 @@
-"use  client"
-
 "use client";
 
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { useParams } from "next/navigation";
-import { SingleImageDropzone } from "@/components/single-image-dropzone";
+
 import {
     Dialog,
     DialogContent,
     DialogHeader
 } from "@/components/ui/dialog";
 import { useCoverImage } from "@/hooks/use-cover-image";
+import { SingleImageDropzone } from "@/components/single-image-dropzone";
 import { useEdgeStore } from "@/lib/edgestore";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
+export const CoverImageModal = () => {
+    const params = useParams();
+    const update = useMutation(api.documents.update);
+    const coverImage = useCoverImage();
+    const { edgestore } = useEdgeStore();
 
-
-export const CoverImageModel = () => {
-
-
- const update = useMutation(api.documents.update)
- const params = useParams()
-    const [file,setFile ] = useState<File>();
-    const [isSubmitting,setIsSubmitting] = useState(false)
-    const {edgestore} = useEdgeStore()
-
+    const [file, setFile] = useState<File>();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const onClose = () => {
         setFile(undefined);
@@ -34,29 +30,45 @@ export const CoverImageModel = () => {
         coverImage.onClose();
     }
 
-const onChange = async(file?:File) => {
-    if(file){
-        setIsSubmitting(true)
-        setFile(file)
-    const res = await edgestore.publicFiles.upload({
-        file
-    })
+    const onChange = async (file?: File) => {
+        if (file) {
+            setIsSubmitting(true);
+            setFile(file);
 
-    await update({
-        id:params.documentId as Id<"documents">,
-        coverImage:res.url
-    });
+            let res;
+            if(coverImage.url){
+                res = await edgestore.publicFiles.upload(
+                    {
+                        file,
+                        options: {
+                            replaceTargetUrl:coverImage.url
+                        }
+                    }
+                ) 
+            }else{
+                res = await edgestore.publicFiles.upload(
+                    {
+                        file
+                    }
+                )
+            }
 
-    onClose();
+            await update({
+                id: params.documentId as Id<"documents">,
+                coverImage: res.url
+            });
+
+            onClose();
+        }
     }
-}
 
-    const coverImage = useCoverImage()
     return (
         <Dialog open={coverImage.isOpen} onOpenChange={coverImage.onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <h2 className="text-center text-lg font-semibold">Cover Image</h2>
+                    <h2 className="text-center text-lg font-semibold">
+                        Cover Image
+                    </h2>
                 </DialogHeader>
                 <SingleImageDropzone
                     className="w-full outline-none"
@@ -66,5 +78,5 @@ const onChange = async(file?:File) => {
                 />
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};

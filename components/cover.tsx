@@ -5,6 +5,12 @@ import  Image from "next/image"
 import { Button } from "./ui/button"
 import { ImageIcon, X } from "lucide-react"
 import { useCoverImage } from "@/hooks/use-cover-image"
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useEdgeStore } from "@/lib/edgestore";
+import { useMutation } from "convex/react"
+import { useParams } from "next/navigation"
+
 interface CoverImageProps {
     url?:string,
     preview?:boolean
@@ -12,9 +18,19 @@ interface CoverImageProps {
 
 export const Cover = ({url,preview}:CoverImageProps) => {
     const coverImage = useCoverImage()
-
-    
-
+    const { edgestore } = useEdgeStore();
+    const removeCoverImage = useMutation(api.documents.removeCoverImage);
+    const params = useParams()
+    const onRemove = async () => {
+        if (url) {
+            await edgestore.publicFiles.delete({
+                url: url
+            })
+        }
+        removeCoverImage({
+            id: params.documentId as Id<"documents">
+        });
+    };
 
 
     return (
@@ -27,7 +43,7 @@ export const Cover = ({url,preview}:CoverImageProps) => {
     url && !preview && (
         <div className="absolute  opacity-0 group-hover:opacity-100 right-5 flex items-center gap-x-2 bottom-5">
             <Button
-            onClick={coverImage.onOpen}
+            onClick={() => coverImage.onReplace(url)}
             variant="outline"
             size="sm"
             >
@@ -35,7 +51,7 @@ export const Cover = ({url,preview}:CoverImageProps) => {
                 Change Cover
             </Button>
             <Button
-            onClick={()=>{}}
+            onClick={onRemove}
             variant="outline"
             size="sm"
             >
