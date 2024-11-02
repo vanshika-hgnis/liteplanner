@@ -2,7 +2,7 @@
 
 const DocumentPage = () => {
   return (
-    <div>DocumentId</div>
+    <div></div>
   )
 }
 export default DocumentPage
