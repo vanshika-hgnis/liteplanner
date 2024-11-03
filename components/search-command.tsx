@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/command";
 import { useSearch } from "@/hooks/use-search";
 import { api } from "@/convex/_generated/api";
-import { Akatab } from "next/font/google";
+
 
 export const SearchCommand = () => {
     const { user } = useUser();
