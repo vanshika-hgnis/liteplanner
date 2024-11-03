@@ -1,38 +1,30 @@
 "use client";
 
 import { useMutation, useQuery } from "convex/react";
-import dynamic from "next/dynamic";
-import { useMemo } from "react";
-
-import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Toolbar } from "@/components/toolbar";
 import { Cover } from "@/components/cover";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Editor } from "@/components/Editor";
+import { api } from "@/convex/_generated/api";
+import { PartialBlock } from "@blocknote/core";
 
-
- 
 interface DocumentIdPageProps {
     params: {
         documentId: Id<"documents">;
     };
-};
+}
 
-const DocumentIdPage = ({
-    params
-}: DocumentIdPageProps) => {
-
+const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     const document = useQuery(api.documents.getById, {
         documentId: params.documentId
     });
 
-    const update = useMutation(api.documents.update);
+    const updateDocument = useMutation(api.documents.update);
 
-    const onChange = (content: string) => {
-        update({
-            id: params.documentId,
-            content
-        });
+    // Update the document's content in Convex when the editor content changes
+    const handleEditorChange = (content: PartialBlock[]) => {
+        updateDocument({ id: params.documentId, content: JSON.stringify(content) });
     };
 
     if (document === undefined) {
@@ -52,21 +44,24 @@ const DocumentIdPage = ({
     }
 
     if (document === null) {
-        return <div>Not found</div>
+        return <div>Not found</div>;
     }
+
+    // Parse the initial content if available
+    const initialContent = document.content ? JSON.parse(document.content) : undefined;
 
     return (
         <div className="pb-40">
             <Cover url={document.coverImage} />
             <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
                 <Toolbar initialData={document} />
-                <div>
-                  This is where the editor should be but for some reasons its not appearing whatever i do 
-                  </div>
-
+                <Editor 
+                    onChange={handleEditorChange} 
+                    initialContent={initialContent} 
+                />
             </div>
         </div>
     );
-}
+};
 
 export default DocumentIdPage;
