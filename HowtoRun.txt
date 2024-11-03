@@ -1,0 +1,4 @@
+Two running Terminals on Remote
+> npm run dev
+> npm convex dev
+
