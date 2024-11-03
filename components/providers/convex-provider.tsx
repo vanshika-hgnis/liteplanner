@@ -15,7 +15,7 @@ export const ConvexClientProvider = ({
     return (
         <ClerkProvider
             publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-            afterSignOutUrl="/"
+            afterSignUpUrl="/"
         >
             <ConvexProviderWithClerk
                 useAuth={useAuth}
