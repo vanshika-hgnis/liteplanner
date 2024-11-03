@@ -20,17 +20,14 @@ export const Editor = ({ onChange, initialContent }: EditorProps) => {
         const response = await edgestore.publicFiles.upload({
             file
         });
-
         return response.url;
-    }
+    };
 
-
-    // Use `useCreateBlockNote` to initialize the editor with options
+    // Initialize the editor only if initialContent is provided and non-empty
     const editor = useCreateBlockNote({
-        initialContent: initialContent || [],
-        uploadFile:handleUpload
+        ...(initialContent ? { initialContent } : {}),
+        uploadFile: handleUpload,
     });
-
 
     useEffect(() => {
         if (editor) {
